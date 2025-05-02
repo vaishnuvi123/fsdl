@@ -1,0 +1,230 @@
+1. Create a new Angular project:
+First, if you haven't already, create a new Angular project:
+
+bash
+Copy
+Edit
+ng new angular-quiz-app
+cd angular-quiz-app
+2. Generate necessary components:
+Generate components for the quiz, question navigation, and results page:
+
+bash
+Copy
+Edit
+ng generate component quiz
+ng generate component question
+ng generate component results
+3. Define the quiz data:
+In your quiz.component.ts, define the questions and options, along with a way to track the answers.
+
+typescript
+Copy
+Edit
+// src/app/quiz/quiz.component.ts
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
+interface Question {
+  question: string;
+  options: string[];
+  answer: number;
+}
+
+@Component({
+  selector: 'app-quiz',
+  templateUrl: './quiz.component.html',
+  styleUrls: ['./quiz.component.css']
+})
+export class QuizComponent {
+  questions: Question[] = [
+    {
+      question: 'What does HTML stand for?',
+      options: ['HyperText Markup Language', 'Hyper Trainer Marking Language', 'HyperText Machine Language', 'Hyperlink and Text Markup Language'],
+      answer: 0
+    },
+    {
+      question: 'Which CSS property controls text size?',
+      options: ['font-size', 'text-size', 'text-style', 'font-weight'],
+      answer: 0
+    },
+    {
+      question: 'Which JavaScript method writes to the console?',
+      options: ['log.console()', 'console.write()', 'console.log()', 'write.console()'],
+      answer: 2
+    },
+    {
+      question: 'Which tag defines a JavaScript script in HTML?',
+      options: ['<js>', '<script>', '<javascript>', '<code>'],
+      answer: 1
+    },
+    {
+      question: 'Which is not a JavaScript data type?',
+      options: ['String', 'Boolean', 'Float', 'Undefined'],
+      answer: 2
+    }
+  ];
+
+  currentIndex: number = 0;
+  answers: number[] = []; // Stores selected answers
+
+  constructor(private router: Router) {}
+
+  selectAnswer(index: number) {
+    this.answers[this.currentIndex] = index; // Store the answer for the current question
+  }
+
+  nextQuestion() {
+    if (this.currentIndex < this.questions.length - 1) {
+      this.currentIndex++;
+    } else {
+      this.router.navigate(['/results'], { state: { answers: this.answers, questions: this.questions } });
+    }
+  }
+
+  previousQuestion() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+}
+4. Create the quiz.component.html template:
+This template will display the questions, options, and navigation buttons.
+
+html
+Copy
+Edit
+<!-- src/app/quiz/quiz.component.html -->
+<div class="quiz-container">
+  <h2>{{ questions[currentIndex].question }}</h2>
+  
+  <div *ngFor="let option of questions[currentIndex].options; let i = index">
+    <label>
+      <input type="radio" name="answer" [value]="i" [(ngModel)]="answers[currentIndex]" (change)="selectAnswer(i)" />
+      {{ option }}
+    </label>
+  </div>
+
+  <button (click)="previousQuestion()" [disabled]="currentIndex === 0">Previous</button>
+  <button (click)="nextQuestion()">Next</button>
+</div>
+5. Create the results.component.ts to display the quiz results:
+In the results.component.ts, calculate and display the user's score.
+
+typescript
+Copy
+Edit
+// src/app/results/results.component.ts
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-results',
+  templateUrl: './results.component.html',
+  styleUrls: ['./results.component.css']
+})
+export class ResultsComponent implements OnInit {
+  answers: number[] = [];
+  questions: any[] = [];
+  score: number = 0;
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    const navigation = this.route.getCurrentNavigation();
+    if (navigation?.extras.state) {
+      this.answers = navigation.extras.state.answers;
+      this.questions = navigation.extras.state.questions;
+      this.calculateScore();
+    }
+  }
+
+  calculateScore() {
+    this.score = this.answers.reduce((score, answer, index) => {
+      return score + (answer === this.questions[index].answer ? 1 : 0);
+    }, 0);
+  }
+}
+6. Create the results.component.html template:
+This template will show the results after completing the quiz.
+
+html
+Copy
+Edit
+<!-- src/app/results/results.component.html -->
+<div class="results-container">
+  <h2>Quiz Completed</h2>
+  <p>Your Score: {{ score }} / {{ questions.length }}</p>
+
+  <button routerLink="/">Retry</button>
+</div>
+7. Update the app routing to handle navigation:
+Make sure to configure routing in your app-routing.module.ts.
+
+typescript
+Copy
+Edit
+// src/app/app-routing.module.ts
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { QuizComponent } from './quiz/quiz.component';
+import { ResultsComponent } from './results/results.component';
+
+const routes: Routes = [
+  { path: '', component: QuizComponent },
+  { path: 'results', component: ResultsComponent },
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+8. Add FormsModule to the app module:
+To enable two-way data binding with ngModel, import FormsModule in app.module.ts.
+
+typescript
+Copy
+Edit
+// src/app/app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
+
+import { AppComponent } from './app.component';
+import { QuizComponent } from './quiz/quiz.component';
+import { ResultsComponent } from './results/results.component';
+import { AppRoutingModule } from './app-routing.module';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    QuizComponent,
+    ResultsComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    AppRoutingModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+9. Run the application:
+After setting up the project, run the app using the following command:
+
+bash
+Copy
+Edit
+ng serve
+This will start the app, and you should be able to navigate through the questions, answer them, and view your results at the end.
+
+
+
+
+
+
+
+
+

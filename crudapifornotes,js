@@ -1,0 +1,226 @@
+1. Set up the project:
+Initialize a new Node.js project.
+
+bash
+Copy
+Edit
+mkdir notes-api
+cd notes-api
+npm init -y
+2. Install required dependencies:
+You will need Express for the server, Mongoose for MongoDB interaction, and Body-parser for parsing incoming request bodies.
+
+bash
+Copy
+Edit
+npm install express mongoose body-parser
+3. Set up MongoDB:
+You can use MongoDB Atlas (cloud) or MongoDB locally for this project.
+
+If using MongoDB locally, ensure you have MongoDB running on mongodb://localhost:27017.
+
+MongoDB Atlas:
+Sign up at MongoDB Atlas and create a new cluster.
+
+Create a new database and a collection (e.g., notes).
+
+Obtain your connection string and use it to connect to MongoDB.
+
+4. Create the Express server and MongoDB connection:
+server.js
+javascript
+Copy
+Edit
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
+// Initialize the app
+const app = express();
+
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
+
+// MongoDB connection URI (replace with your own MongoDB URI)
+const mongoURI = 'mongodb://localhost:27017/notes-api'; // Use your MongoDB URI here
+
+// Connect to MongoDB
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('MongoDB connection error:', err));
+
+// Define the Note schema and model
+const noteSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  content: { type: String, required: true }
+});
+
+const Note = mongoose.model('Note', noteSchema);
+
+// CRUD Routes for Notes
+
+// CREATE a new note
+app.post('/api/notes', async (req, res) => {
+  const { title, content } = req.body;
+  
+  try {
+    const newNote = new Note({
+      title,
+      content
+    });
+    await newNote.save();
+    res.status(201).json(newNote);
+  } catch (err) {
+    res.status(500).json({ message: 'Error creating note', error: err.message });
+  }
+});
+
+// READ all notes
+app.get('/api/notes', async (req, res) => {
+  try {
+    const notes = await Note.find();
+    res.status(200).json(notes);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching notes', error: err.message });
+  }
+});
+
+// READ a specific note by ID
+app.get('/api/notes/:id', async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+    res.status(200).json(note);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching note', error: err.message });
+  }
+});
+
+// UPDATE a note by ID
+app.put('/api/notes/:id', async (req, res) => {
+  const { title, content } = req.body;
+  
+  try {
+    const updatedNote = await Note.findByIdAndUpdate(
+      req.params.id,
+      { title, content },
+      { new: true }
+    );
+    if (!updatedNote) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+    res.status(200).json(updatedNote);
+  } catch (err) {
+    res.status(500).json({ message: 'Error updating note', error: err.message });
+  }
+});
+
+// DELETE a note by ID
+app.delete('/api/notes/:id', async (req, res) => {
+  try {
+    const deletedNote = await Note.findByIdAndDelete(req.params.id);
+    if (!deletedNote) {
+      return res.status(404).json({ message: 'Note not found' });
+    }
+    res.status(200).json({ message: 'Note deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting note', error: err.message });
+  }
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+5. Testing the API using Postman:
+Now you can test the API using Postman. The following endpoints will be available:
+
+POST /api/notes (Create a new note):
+Body (JSON):
+
+json
+Copy
+Edit
+{
+  "title": "My First Note",
+  "content": "This is the content of my first note."
+}
+Expected Response (JSON):
+
+json
+Copy
+Edit
+{
+  "title": "My First Note",
+  "content": "This is the content of my first note.",
+  "_id": "60c5f84f5f07e84a1859e5b9",
+  "__v": 0
+}
+GET /api/notes (Get all notes):
+Expected Response (JSON):
+
+json
+Copy
+Edit
+[
+  {
+    "_id": "60c5f84f5f07e84a1859e5b9",
+    "title": "My First Note",
+    "content": "This is the content of my first note.",
+    "__v": 0
+  }
+]
+GET /api/notes/:id (Get a specific note by ID):
+URL Example: http://localhost:3000/api/notes/60c5f84f5f07e84a1859e5b9
+
+Expected Response (JSON):
+
+json
+Copy
+Edit
+{
+  "_id": "60c5f84f5f07e84a1859e5b9",
+  "title": "My First Note",
+  "content": "This is the content of my first note.",
+  "__v": 0
+}
+PUT /api/notes/:id (Update a note by ID):
+Body (JSON):
+
+json
+Copy
+Edit
+{
+  "title": "Updated Note Title",
+  "content": "Updated content for the note."
+}
+Expected Response (JSON):
+
+json
+Copy
+Edit
+{
+  "_id": "60c5f84f5f07e84a1859e5b9",
+  "title": "Updated Note Title",
+  "content": "Updated content for the note.",
+  "__v": 0
+}
+DELETE /api/notes/:id (Delete a note by ID):
+Expected Response (JSON):
+
+json
+Copy
+Edit
+{
+  "message": "Note deleted successfully"
+}
+6. Run the server:
+Run the server with the following command:
+
+bash
+Copy
+Edit
+node server.js

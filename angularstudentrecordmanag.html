@@ -1,0 +1,172 @@
+1. **Install Angular CLI (if not already installed):**
+
+Run the following command to install Angular CLI:
+npm install -g @angular/cli
+2. **Create a new Angular project:**
+
+Create a new Angular project:
+
+ng new student-record-manager
+cd student-record-manager
+```
+
+#### 3. **Generate a component for student records:**
+
+Generate a new component to manage student records:
+
+```bash
+ng generate component student-records
+```
+
+#### 4. **Update `app.component.ts` and `app.component.html`:**
+
+##### **App Component (src/app/app.component.ts)**:
+
+```typescript
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  title = 'Student Record Manager';
+}
+```
+
+##### **App HTML Template (src/app/app.component.html)**:
+
+```html
+<div style="text-align: center;">
+  <h1>{{ title }}</h1>
+  <app-student-records></app-student-records>
+</div>
+```
+
+#### 5. **Implement the Student Records Component:**
+
+In this step, we will handle the form to add/edit student records and display them in a table.
+
+##### **Student Records Component (src/app/student-records/student-records.component.ts)**:
+
+```typescript
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-student-records',
+  templateUrl: './student-records.component.html',
+  styleUrls: ['./student-records.component.css']
+})
+export class StudentRecordsComponent {
+  students = [];
+  currentStudent = { name: '', rollNo: '', grade: '' };
+  editingIndex: number | null = null;
+
+  addStudent() {
+    if (this.currentStudent.name && this.currentStudent.rollNo && this.currentStudent.grade) {
+      if (this.editingIndex !== null) {
+        // Update existing student
+        this.students[this.editingIndex] = { ...this.currentStudent };
+        this.editingIndex = null;
+      } else {
+        // Add new student
+        this.students.push({ ...this.currentStudent });
+      }
+
+      // Reset form
+      this.resetForm();
+    } else {
+      alert('Please fill all fields');
+    }
+  }
+
+  editStudent(index: number) {
+    this.currentStudent = { ...this.students[index] };
+    this.editingIndex = index;
+  }
+
+  deleteStudent(index: number) {
+    this.students.splice(index, 1);
+  }
+
+  resetForm() {
+    this.currentStudent = { name: '', rollNo: '', grade: '' };
+  }
+}
+```
+
+##### **Student Records HTML Template (src/app/student-records/student-records.component.html)**:
+
+```html
+<div>
+  <!-- Form for Adding/Editing Students -->
+  <form (ngSubmit)="addStudent()">
+    <input [(ngModel)]="currentStudent.name" name="name" placeholder="Student Name" required />
+    <input [(ngModel)]="currentStudent.rollNo" name="rollNo" placeholder="Roll No" required />
+    <input [(ngModel)]="currentStudent.grade" name="grade" placeholder="Grade" required />
+    <button type="submit">{{ editingIndex !== null ? 'Update Student' : 'Add Student' }}</button>
+  </form>
+
+  <h2>Student Records</h2>
+  <!-- Table to Display Students -->
+  <table border="1" style="width: 100%; margin-top: 20px;">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Roll No</th>
+        <th>Grade</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let student of students; let i = index">
+        <td>{{ student.name }}</td>
+        <td>{{ student.rollNo }}</td>
+        <td>{{ student.grade }}</td>
+        <td>
+          <button (click)="editStudent(i)">Edit</button>
+          <button (click)="deleteStudent(i)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
+
+#### 6. **Add FormsModule to the App Module:**
+
+To use `ngModel` for two-way data binding in the form, you need to import `FormsModule` in the app module.
+
+##### **App Module (src/app/app.module.ts)**:
+
+```typescript
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';  // Import FormsModule
+
+import { AppComponent } from './app.component';
+import { StudentRecordsComponent } from './student-records/student-records.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    StudentRecordsComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule  // Add FormsModule here
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+```
+
+#### 7. **Run the Application**:
+
+Run the application using:
+
+```bash
+ng serve
+

@@ -1,0 +1,170 @@
+1. Create a new Angular project:
+If you haven't created an Angular project yet, run the following commands to set up the project:
+
+bash
+Copy
+Edit
+ng new angular-movie-search
+cd angular-movie-search
+2. Generate a movie search component:
+Generate a new component for the movie search functionality:
+
+bash
+Copy
+Edit
+ng generate component movie-search
+3. Define the movie data and search functionality:
+In the movie-search.component.ts, define an array of movies and implement a search function to filter the list by title.
+
+typescript
+Copy
+Edit
+// src/app/movie-search/movie-search.component.ts
+import { Component } from '@angular/core';
+
+interface Movie {
+  title: string;
+  releaseYear: number;
+  genre: string;
+}
+
+@Component({
+  selector: 'app-movie-search',
+  templateUrl: './movie-search.component.html',
+  styleUrls: ['./movie-search.component.css']
+})
+export class MovieSearchComponent {
+  searchQuery: string = '';
+  
+  // Hardcoded list of movies
+  movies: Movie[] = [
+    { title: 'Inception', releaseYear: 2010, genre: 'Sci-Fi' },
+    { title: 'The Dark Knight', releaseYear: 2008, genre: 'Action' },
+    { title: 'Interstellar', releaseYear: 2014, genre: 'Sci-Fi' },
+    { title: 'The Matrix', releaseYear: 1999, genre: 'Sci-Fi' },
+    { title: 'The Godfather', releaseYear: 1972, genre: 'Crime' },
+    { title: 'Pulp Fiction', releaseYear: 1994, genre: 'Crime' },
+    { title: 'Forrest Gump', releaseYear: 1994, genre: 'Drama' },
+    { title: 'The Shawshank Redemption', releaseYear: 1994, genre: 'Drama' },
+  ];
+
+  // Filtered movies based on the search query
+  get filteredMovies(): Movie[] {
+    return this.movies.filter(movie => movie.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
+  }
+}
+4. Create the movie-search.component.html template:
+This template will display the search input field and a list of movies, with the ability to filter the list by title.
+
+html
+Copy
+Edit
+<!-- src/app/movie-search/movie-search.component.html -->
+<div class="movie-search-container">
+  <h2>Movie Search</h2>
+
+  <!-- Search Input -->
+  <input 
+    type="text" 
+    [(ngModel)]="searchQuery" 
+    placeholder="Search by movie title" 
+    class="search-input"
+  />
+
+  <!-- Movie List -->
+  <div *ngIf="filteredMovies.length > 0; else noResults">
+    <ul>
+      <li *ngFor="let movie of filteredMovies">
+        <h3>{{ movie.title }} ({{ movie.releaseYear }})</h3>
+        <p>Genre: {{ movie.genre }}</p>
+      </li>
+    </ul>
+  </div>
+
+  <!-- No Results Message -->
+  <ng-template #noResults>
+    <p>No movies found for "{{ searchQuery }}"</p>
+  </ng-template>
+</div>
+5. Style the component for a better user interface:
+You can style the component to make it look better. Here is a basic CSS style for the component.
+
+css
+Copy
+Edit
+/* src/app/movie-search/movie-search.component.css */
+.movie-search-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.search-input {
+  padding: 10px;
+  width: 80%;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background-color: #f9f9f9;
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+  margin: 0;
+}
+
+p {
+  font-size: 14px;
+  color: #555;
+}
+6. Update app.module.ts to include the new component and FormsModule:
+To enable two-way data binding (ngModel), you need to import FormsModule in the app.module.ts.
+
+typescript
+Copy
+Edit
+// src/app/app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
+
+import { AppComponent } from './app.component';
+import { MovieSearchComponent } from './movie-search/movie-search.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    MovieSearchComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+7. Update app.component.html to include the MovieSearch component:
+html
+Copy
+Edit
+<!-- src/app/app.component.html -->
+<app-movie-search></app-movie-search>
+8. Run the application:
+Finally, run the application using the Angular CLI:
+
+bash
+Copy
+Edit
+ng serve

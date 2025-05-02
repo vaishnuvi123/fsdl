@@ -1,0 +1,211 @@
+1. Create a new Angular project:
+bash
+Copy
+Edit
+ng new angular-shopping-cart
+cd angular-shopping-cart
+2. Generate a shopping cart component:
+Generate a new component for the shopping cart:
+
+bash
+Copy
+Edit
+ng generate component shopping-cart
+3. Set up the shopping cart component to manage cart items:
+Shopping Cart Component (src/app/shopping-cart/shopping-cart.component.ts):
+This will handle adding, removing, and displaying items along with calculating the total price.
+
+typescript
+Copy
+Edit
+import { Component } from '@angular/core';
+
+interface CartItem {
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+@Component({
+  selector: 'app-shopping-cart',
+  templateUrl: './shopping-cart.component.html',
+  styleUrls: ['./shopping-cart.component.css']
+})
+export class ShoppingCartComponent {
+  cart: CartItem[] = [];  // Cart to store items
+  totalPrice: number = 0;  // Total price of items in the cart
+
+  items = [
+    { name: 'Laptop', price: 1000 },
+    { name: 'Phone', price: 500 },
+    { name: 'Headphones', price: 150 },
+    { name: 'Tablet', price: 300 },
+  ];
+
+  // Add item to the cart
+  addToCart(item: any) {
+    const existingItem = this.cart.find(cartItem => cartItem.name === item.name);
+    
+    if (existingItem) {
+      existingItem.quantity++;
+    } else {
+      this.cart.push({ ...item, quantity: 1 });
+    }
+
+    this.updateTotalPrice();
+  }
+
+  // Remove item from the cart
+  removeFromCart(item: CartItem) {
+    const index = this.cart.findIndex(cartItem => cartItem.name === item.name);
+    if (index !== -1) {
+      this.cart.splice(index, 1);
+    }
+
+    this.updateTotalPrice();
+  }
+
+  // Update the total price of all cart items
+  updateTotalPrice() {
+    this.totalPrice = this.cart.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0);
+  }
+}
+Shopping Cart HTML Template (src/app/shopping-cart/shopping-cart.component.html):
+This template will display the products and the cart with the ability to add/remove items and see the total price.
+
+html
+Copy
+Edit
+<div class="shopping-cart">
+  <h1>Angular Shopping Cart</h1>
+
+  <!-- Available Items -->
+  <div class="items">
+    <h2>Available Items</h2>
+    <div *ngFor="let item of items" class="item">
+      <span>{{ item.name }} - ${{ item.price }}</span>
+      <button (click)="addToCart(item)">Add to Cart</button>
+    </div>
+  </div>
+
+  <!-- Shopping Cart -->
+  <div class="cart">
+    <h2>Your Cart</h2>
+    <table *ngIf="cart.length > 0; else emptyCart">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Subtotal</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cartItem of cart">
+          <td>{{ cartItem.name }}</td>
+          <td>${{ cartItem.price }}</td>
+          <td>{{ cartItem.quantity }}</td>
+          <td>${{ cartItem.price * cartItem.quantity }}</td>
+          <td>
+            <button (click)="removeFromCart(cartItem)">Remove</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Empty Cart Message -->
+    <ng-template #emptyCart>
+      <p>Your cart is empty.</p>
+    </ng-template>
+
+    <div class="total-price">
+      <h3>Total: ${{ totalPrice }}</h3>
+    </div>
+  </div>
+</div>
+4. Add styling to the component for better visual presentation:
+Shopping Cart CSS (src/app/shopping-cart/shopping-cart.component.css):
+css
+Copy
+Edit
+.shopping-cart {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.items, .cart {
+  margin: 20px 0;
+}
+
+.item, .cart table {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.cart table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cart table th, .cart table td {
+  padding: 10px;
+  text-align: center;
+}
+
+.cart table th {
+  background-color: #f4f4f4;
+}
+
+.total-price {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+5. Update app.module.ts to include the new component:
+Ensure that the ShoppingCartComponent is imported and declared in the app module.
+
+App Module (src/app/app.module.ts):
+typescript
+Copy
+Edit
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppComponent } from './app.component';
+import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    ShoppingCartComponent
+  ],
+  imports: [
+    BrowserModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+6. Run the application:
+Finally, you can run the application with:
+
+bash
+Copy
+Edit
+ng serve
