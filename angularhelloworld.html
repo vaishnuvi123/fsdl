@@ -1,0 +1,63 @@
+/** 1. Install Angular CLI (if you haven't already):
+If you don’t have Angular CLI installed, you can do so by running:
+npm install -g @angular/cli
+
+2. Create a new Angular app:
+Use the following command to create a new Angular project:
+ng new angular-data-binding
+cd angular-data-binding
+Choose default settings when prompted (or customize as you wish).
+
+3. Create the two-way data binding app:
+App Component (src/app/app.component.ts):
+typescript
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  // This is the message that will be bound to the input field
+  message: string = '';
+}
+
+App HTML Template (src/app/app.component.html):
+
+<div style="text-align: center; margin-top: 50px;">
+  <h1>Angular Two-Way Data Binding Example</h1>
+
+  <!-- Input field with two-way data binding -->
+  <input type="text" [(ngModel)]="message" placeholder="Type a message here" />
+
+  <!-- Display the updated message -->
+  <p>Your message: {{ message }}</p>
+</div>
+
+4. Add FormsModule:
+To use two-way data binding with [(ngModel)], you need to import FormsModule in your Angular module.
+App Module (src/app/app.module.ts):
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule  // Add FormsModule here
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+5. Run the application:
+Now, you can run the application using:
+
+ng serve

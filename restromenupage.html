@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Restaurant Menu</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #fff8f0;
+    }
+    .menu-section {
+      margin-top: 50px;
+    }
+    .card img {
+      height: 200px;
+      object-fit: cover;
+    }
+    .card-title {
+      font-weight: bold;
+    }
+    .price {
+      color: #28a745;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="bg-danger text-white text-center py-4">
+    <h1>La Bella Cucina</h1>
+    <p class="lead">Authentic Italian Dishes & Delights</p>
+  </header>
+
+  <div class="container menu-section">
+
+    <!-- 🍕 Starters -->
+    <h2 class="mb-4">Starters</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card">
+          <img src="https://via.placeholder.com/400x200?text=Bruschetta" class="card-img-top" alt="Bruschetta">
+          <div class="card-body">
+            <h5 class="card-title">Bruschetta</h5>
+            <p class="card-text">Grilled bread topped with tomato, garlic, and basil.</p>
+            <p class="price">$6.99</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card">
+          <img src="https://via.placeholder.com/400x200?text=Caprese+Salad" class="card-img-top" alt="Caprese Salad">
+          <div class="card-body">
+            <h5 class="card-title">Caprese Salad</h5>
+            <p class="card-text">Fresh mozzarella, tomatoes, and basil with olive oil.</p>
+            <p class="price">$7.99</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🍝 Main Courses -->
+    <h2 class="mt-5 mb-4">Main Courses</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card">
+          <img src="https://via.placeholder.com/400x200?text=Spaghetti+Bolognese" class="card-img-top" alt="Spaghetti Bolognese">
+          <div class="card-body">
+            <h5 class="card-title">Spaghetti Bolognese</h5>
+            <p class="card-text">Classic pasta with rich meat sauce and Parmesan.</p>
+            <p class="price">$12.99</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card">
+          <img src="https://via.placeholder.com/400x200?text=Margherita+Pizza" class="card-img-top" alt="Margherita Pizza">
+          <div class="card-body">
+            <h5 class="card-title">Margherita Pizza</h5>
+            <p class="card-text">Tomato, fresh mozzarella, and basil on a wood-fired crust.</p>
+            <p class="price">$11.49</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🍰 Desserts -->
+    <h2 class="mt-5 mb-4">Desserts</h2>
+    <div class="row g-4 mb-5">
+      <div class="col-md-4">
+        <div class="card">
+          <img src="https://via.placeholder.com/400x200?text=Tiramisu" class="card-img-top" alt="Tiramisu">
+          <div class="card-body">
+            <h5 class="card-title">Tiramisu</h5>
+            <p class="card-text">Espresso-soaked ladyfingers layered with mascarpone cream.</p>
+            <p class="price">$5.99</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

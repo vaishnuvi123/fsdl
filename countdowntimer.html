@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .timer-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 350px;
+    }
+
+    input {
+      padding: 10px;
+      width: 80px;
+      margin: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #countdown {
+      font-size: 2rem;
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="timer-container">
+    <h2>Countdown Timer</h2>
+    <div>
+      <input type="number" id="minutes" placeholder="Minutes" min="0">
+      <input type="number" id="seconds" placeholder="Seconds" min="0" max="59">
+    </div>
+    <button onclick="startTimer()">Start</button>
+    <div id="countdown">00:00</div>
+  </div>
+
+  <script>
+    let countdownInterval;
+
+    function startTimer() {
+      clearInterval(countdownInterval); // clear any existing timer
+
+      const minutesInput = parseInt(document.getElementById("minutes").value) || 0;
+      const secondsInput = parseInt(document.getElementById("seconds").value) || 0;
+      let totalSeconds = minutesInput * 60 + secondsInput;
+
+      if (totalSeconds <= 0) {
+        alert("Please enter a valid time.");
+        return;
+      }
+
+      updateDisplay(totalSeconds);
+
+      countdownInterval = setInterval(() => {
+        totalSeconds--;
+
+        if (totalSeconds < 0) {
+          clearInterval(countdownInterval);
+          document.getElementById("countdown").textContent = "00:00";
+          alert("⏰ Time's up!");
+        } else {
+          updateDisplay(totalSeconds);
+        }
+      }, 1000);
+    }
+
+    function updateDisplay(seconds) {
+      const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const secs = String(seconds % 60).padStart(2, "0");
+      document.getElementById("countdown").textContent = `${mins}:${secs}`;
+    }
+  </script>
+
+</body>
+</html>
